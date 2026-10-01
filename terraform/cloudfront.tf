@@ -3,6 +3,7 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
     domain_name              = aws_s3_bucket.s3_frontend.bucket_regional_domain_name
     origin_id                = "s3_frontend"
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_frontend_oac.id
+
   }
 
   enabled             = true
@@ -13,7 +14,9 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   aliases = [
     "blog-lab05-cloudfront.shop",
     "www.blog-lab05-cloudfront.shop",
-    ]
+  ]
+
+  web_acl_id = aws_wafv2_web_acl.blog_lab05_waf.arn
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
@@ -34,8 +37,8 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn            = aws_acm_certificate.cert.arn
-    ssl_support_method             = "sni-only"
+    acm_certificate_arn      = aws_acm_certificate.cert.arn
+    ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
 }
