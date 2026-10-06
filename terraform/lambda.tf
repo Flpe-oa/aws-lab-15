@@ -1,7 +1,7 @@
 # Pacote da Lambda
 data "archive_file" "blog_lab05_lambda" {
   type        = "zip"
-  source_dir = "${path.module}/app/"
+  source_dir  = "${path.module}/app/"
   output_path = "${path.module}/app/function.zip"
 }
 

@@ -17,3 +17,8 @@ output "aws_acm_certificate" {
   description = "ARN of the ACM certificate for the frontend"
   value       = aws_acm_certificate.cert.arn
 }
+
+output "api_gateway_url" {
+  description = "URL of the API Gateway for the backend"
+  value       = aws_apigatewayv2_stage.api_gateway_blog_lab05_stage.invoke_url
+}
