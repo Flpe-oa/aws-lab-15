@@ -13,3 +13,4 @@ crash.*.log
 
 *.zip
 node_modules/
+tf.sh
