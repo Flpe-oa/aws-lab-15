@@ -22,3 +22,13 @@ output "api_gateway_url" {
   description = "URL of the API Gateway for the backend"
   value       = aws_apigatewayv2_stage.api_gateway_blog_lab05_stage.invoke_url
 }
+
+output "cognito_user_pool_id" {
+  description = "ID do Cognito User Pool"
+  value       = aws_cognito_user_pool.blog_lab05_user_pool.id
+}
+
+output "cognito_client_id" {
+  description = "ID do Cognito App Client"
+  value       = aws_cognito_user_pool_client.blog_lab05_user_pool_client.id
+}
