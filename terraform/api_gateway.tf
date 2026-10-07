@@ -1,6 +1,27 @@
 resource "aws_apigatewayv2_api" "api_gateway_blog_lab05" {
   name          = "api_blog_lab05"
   protocol_type = "HTTP"
+
+  cors_configuration {
+  allow_origins = [
+    "https://www.blog-lab05-cloudfront.shop",
+    "https://blog-lab05-cloudfront.shop"
+  ]
+
+    allow_methods = [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS",
+    ]
+
+    allow_headers = [
+      "Content-Type",
+      "Authorization",
+    ]
+    max_age = 300
+  }
 }
 
 resource "aws_apigatewayv2_integration" "api_gateway_blog_lab05_integration" {
@@ -11,18 +32,24 @@ resource "aws_apigatewayv2_integration" "api_gateway_blog_lab05_integration" {
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route" {
-  api_id             = aws_apigatewayv2_api.api_gateway_blog_lab05.id
-  route_key          = "POST /posts"
-  target             = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
-  authorization_type = "JWT"
-  authorizer_id      = aws_apigatewayv2_authorizer.blog_lab05_authorizer.id
+resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_get_all" {
+  api_id    = aws_apigatewayv2_api.api_gateway_blog_lab05.id
+  route_key = "GET /posts"
+  target    = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
 }
 
 resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_get" {
   api_id    = aws_apigatewayv2_api.api_gateway_blog_lab05.id
   route_key = "GET /posts/{id}"
   target    = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
+}
+
+resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route" {
+  api_id             = aws_apigatewayv2_api.api_gateway_blog_lab05.id
+  route_key          = "POST /posts"
+  target             = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.blog_lab05_authorizer.id
 }
 
 resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_put" {
@@ -40,6 +67,7 @@ resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_delete" {
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.blog_lab05_authorizer.id
 }
+
 
 resource "aws_apigatewayv2_stage" "api_gateway_blog_lab05_stage" {
   api_id      = aws_apigatewayv2_api.api_gateway_blog_lab05.id

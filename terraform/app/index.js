@@ -13,6 +13,10 @@ const client = new DynamoDBClient({});
 
 exports.handler = async (event) => {
   console.log(JSON.stringify(event, null, 2));
+  console.log(
+    "EVENTO RECEBIDO:",
+    JSON.stringify(event, null, 2)
+    );
 
   // ==========================================
   // GET /posts/{id}
