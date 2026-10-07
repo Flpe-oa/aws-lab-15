@@ -1,0 +1,33 @@
+body {
+font-family: Arial, sans-serif;
+max-width: 600px;
+margin: 50px auto;
+padding: 20px;
+}
+
+input,
+textarea {
+display: block;
+width: 100%;
+padding: 10px;
+margin: 8px 0;
+box-sizing: border-box;
+}
+
+textarea {
+resize: vertical;
+}
+
+button {
+padding: 10px 20px;
+margin-top: 10px;
+cursor: pointer;
+}
+
+#userSection {
+margin-top: 20px;
+}
+
+#message {
+margin-top: 20px;
+}
