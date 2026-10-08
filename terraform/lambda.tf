@@ -135,9 +135,9 @@ resource "aws_lambda_function" "blog_lab05_lambda" {
 
   environment {
     variables = {
-      ENVIRONMENT = "Dev"
-      LOG_LEVEL   = "info"
-      TABLE_NAME  = aws_dynamodb_table.blog_lab05_table.name
+      ENVIRONMENT       = "Dev"
+      LOG_LEVEL         = "info"
+      TABLE_NAME        = aws_dynamodb_table.blog_lab05_table.name
       MEDIA_BUCKET_NAME = aws_s3_bucket.blog_media_bucket.bucket
     }
   }

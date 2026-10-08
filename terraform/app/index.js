@@ -7,9 +7,20 @@ const {
   DeleteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 
+const {
+  S3Client,
+  PutObjectCommand,
+} = require("@aws-sdk/client-s3");
+
+const {
+  getSignedUrl,
+} = require("@aws-sdk/s3-request-presigner");
+
 const crypto = require("crypto");
 
 const client = new DynamoDBClient({});
+
+const s3Client = new S3Client({});
 
 exports.handler = async (event) => {
   console.log(JSON.stringify(event, null, 2));
@@ -269,13 +280,27 @@ exports.handler = async (event) => {
 
     const { fileName, fileType } = body;
 
+    const command = new PutObjectCommand({
+      Bucket: process.env.MEDIA_BUCKET_NAME,
+      Key: `uploads/${fileName}`,
+      ContentType: fileType,
+    });
+
+    const uploadUrl = await getSignedUrl(
+      s3Client,
+      command,
+      {
+        expiresIn: 300,
+      },
+    );
+
     return {
       statusCode: 200,
       body: JSON.stringify({
         message: "Presigned URL gerada com sucesso",
         fileName,
         fileType,
-        url: `https://example.com/uploads/${fileName}`,
+        url: uploadUrl,
       }),
     };
   }
