@@ -7,16 +7,25 @@ const {
   DeleteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 
+const {
+  S3Client,
+  PutObjectCommand,
+} = require("@aws-sdk/client-s3");
+
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
 const crypto = require("crypto");
 
 const client = new DynamoDBClient({});
+const s3Client = new S3Client({});
 
 exports.handler = async (event) => {
   console.log(JSON.stringify(event, null, 2));
+
   console.log(
     "EVENTO RECEBIDO:",
-    JSON.stringify(event, null, 2)
-    );
+    JSON.stringify(event, null, 2),
+  );
 
   // ==========================================
   // GET /posts/{id}
@@ -249,6 +258,37 @@ exports.handler = async (event) => {
   }
 
   // ==========================================
+  // POST /uploads/presigned-url
+  // Gerar uma URL pré-assinada para upload de arquivos
+  // ==========================================
+  if (event.routeKey === "POST /uploads/presigned-url") {
+    let body;
+
+    try {
+      body = JSON.parse(event.body);
+    } catch (error) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: "JSON inválido",
+        }),
+      };
+    }
+
+    const { fileName, fileType } = body;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "Presigned URL gerada com sucesso",
+        fileName,
+        fileType,
+        url: `https://example.com/uploads/${fileName}`,
+      }),
+    };
+  }
+
+  // ==========================================
   // Rota não encontrada
   // ==========================================
   return {
@@ -257,38 +297,4 @@ exports.handler = async (event) => {
       message: "Rota não encontrada",
     }),
   };
-
-// ==========================================
-// POST /uploads/presigned-url
-// Gerar uma URL pré-assinada para upload de arquivos
-// ==========================================
-if (event.routeKey === "POST /uploads/presigned-url") {
-
-  let body;
-
-  try {
-    body = JSON.parse(event.body);
-  } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "JSON inválido"
-      })
-    };
-  }
-
-  const { fileName, fileType } = body;
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: "Presigned URL gerada com sucesso",
-      fileName,
-      fileType,
-      url: `https://example.com/uploads/${fileName}`
-    })
-  };
-}
-
-
 };

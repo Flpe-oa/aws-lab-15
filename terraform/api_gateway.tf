@@ -70,9 +70,12 @@ resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_delete" {
 }
 
 resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_presigned" {
-  api_id    = aws_apigatewayv2_api.api_gateway_blog_lab05.id
-  route_key = "POST /posts/presigned-url"
-  target    = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
+  api_id = aws_apigatewayv2_api.api_gateway_blog_lab05.id
+
+  route_key = "POST /uploads/presigned-url"
+
+  target = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
+
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.blog_lab05_authorizer.id
 }
