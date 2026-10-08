@@ -24,4 +24,28 @@ resource "aws_s3_bucket_public_access_block" "blog_media_bucket_public_access_bl
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_cors_configuration" "blog_media_bucket_cors" {
+  bucket = aws_s3_bucket.blog_media_bucket.id
 
+  cors_rule {
+    allowed_origins = [
+      "https://www.blog-lab05-cloudfront.shop"
+    ]
+
+    allowed_methods = [
+      "PUT",
+      "GET",
+      "HEAD"
+    ]
+
+    allowed_headers = [
+      "Content-Type"
+    ]
+
+    expose_headers = [
+      "ETag"
+    ]
+
+    max_age_seconds = 300
+  }
+}

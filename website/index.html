@@ -1,151 +1,123 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
-```
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Blog Lab05</title>
-
-<link
-    rel="stylesheet"
-    href="css/style.css"
->
-```
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Lab05 · Blog serverless na AWS</title>
+  <meta name="description" content="Blog com autenticação, API e banco de dados serverless na AWS. Projeto de laboratório.">
+  <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<h1>Blog Lab05</h1>
-
-
-<!-- LOGIN -->
-
-<section id="loginSection">
-
-    <h2>Login</h2>
-
-    <form id="loginForm">
-
-        <label for="email">
-            E-mail
-        </label>
-
-        <input
-            type="email"
-            id="email"
-            placeholder="seu@email.com"
-            required
-        >
-
-
-        <label for="password">
-            Senha
-        </label>
-
-        <input
-            type="password"
-            id="password"
-            placeholder="Sua senha"
-            required
-        >
-
-
-        <button type="submit">
-            Entrar
-        </button>
-
-    </form>
-
-</section>
-
-
-<!-- USUÁRIO AUTENTICADO -->
-
-<section id="userSection" hidden>
-
-    <h2>
-        Área autenticada
-    </h2>
-
-
-    <p id="status"></p>
-
-
-    <hr>
-
-
-    <!-- CRIAR POST -->
-
-    <h3>
-        Criar post
-    </h3>
-
-
-    <form id="postForm">
-
-        <label for="postTitle">
-            Título
-        </label>
-
-        <input
-            type="text"
-            id="postTitle"
-            placeholder="Título do post"
-            required
-        >
-
-
-        <label for="postContent">
-            Conteúdo
-        </label>
-
-        <textarea
-            id="postContent"
-            rows="6"
-            placeholder="Escreva seu post..."
-            required
-        ></textarea>
-
-
-        <button type="submit">
-            Criar post
-        </button>
-
-    </form>
-
-
-    <button id="logoutButton">
-        Sair
-    </button>
-
-</section>
-
-
-<section id="postsSection">
-    <h2>Posts</h2>
-
-    <div id="postsContainer">
-        Carregando posts...
+  <header class="site-header">
+    <div class="container">
+      <h1>Blog Lab05</h1>
+      <p class="lead">
+        Um blog simples rodando 100% serverless na AWS. Entre com sua conta,
+        publique um post e veja a lista atualizar na hora.
+      </p>
+      <dl class="stack" aria-label="Arquitetura do projeto">
+        <div>
+          <dt>Infraestrutura como código</dt>
+          <dd><span class="tag">Terraform</span></dd>
+        </div>
+        <div>
+          <dt>Entrega e proteção</dt>
+          <dd>
+            <span class="tag">Route 53</span>
+            <span class="tag">CloudFront</span>
+            <span class="tag">WAF</span>
+            <span class="tag">ACM</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Armazenamento</dt>
+          <dd>
+            <span class="tag">S3 (site)</span>
+            <span class="tag">S3 (mídia)</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Backend</dt>
+          <dd>
+            <span class="tag">API Gateway</span>
+            <span class="tag">Lambda</span>
+            <span class="tag">DynamoDB</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Autenticação e permissões</dt>
+          <dd>
+            <span class="tag">Cognito</span>
+            <span class="tag">IAM</span>
+          </dd>
+        </div>
+      </dl>
     </div>
-</section>
+  </header>
 
+  <main class="container">
 
+    <!-- Feedback para o usuário (sucesso / erro) -->
+    <p id="message" class="message" role="status" aria-live="polite" hidden></p>
 
-<p id="message"></p>
+    <!-- LOGIN -->
+    <section id="loginSection" class="panel" aria-labelledby="loginTitle">
+      <h2 id="loginTitle">Entrar</h2>
+      <p class="hint">Use o usuário criado no Cognito para publicar posts. Ler os posts não exige login.</p>
 
+      <form id="loginForm">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="seu@email.com" autocomplete="username" required>
 
-<script src="js/app.js"></script>
+        <label for="password">Senha</label>
+        <input type="password" id="password" placeholder="Sua senha" autocomplete="current-password" required>
 
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+    </section>
 
+    <!-- ÁREA AUTENTICADA -->
+    <section id="userSection" class="panel" aria-labelledby="userTitle" hidden>
+      <div class="panel-head">
+        <div>
+          <h2 id="userTitle">Novo post</h2>
+          <p id="status" class="hint"></p>
+        </div>
+        <button type="button" id="logoutButton" class="btn-secondary">Sair</button>
+      </div>
+
+      <form id="postForm">
+        <label for="postTitle">Título</label>
+        <input type="text" id="postTitle" placeholder="Título do post" maxlength="120" required>
+
+        <label for="postContent">Conteúdo</label>
+        <textarea id="postContent" rows="6" placeholder="Escreva seu post..." required></textarea>
+
+        <button type="submit" class="btn-primary">Publicar post</button>
+      </form>
+    </section>
+
+    <!-- LISTA DE POSTS -->
+    <section id="postsSection" class="posts" aria-labelledby="postsTitle">
+      <div class="panel-head">
+        <h2 id="postsTitle">Posts</h2>
+        <button type="button" id="refreshButton" class="btn-secondary">Atualizar lista</button>
+      </div>
+
+      <div id="postsContainer">Carregando posts...</div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Projeto de laboratório. Toda a infraestrutura é provisionada com Terraform:
+      frontend estático em um bucket S3 privado, servido pelo CloudFront (HTTPS com ACM, DNS no Route 53 e WAF),
+      autenticação com Cognito, API com API Gateway, Lambda e DynamoDB, e um bucket S3 separado para mídia.
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
 </body>
-
 </html>
