@@ -3,10 +3,10 @@ resource "aws_apigatewayv2_api" "api_gateway_blog_lab05" {
   protocol_type = "HTTP"
 
   cors_configuration {
-    allow_origins = [
-      "https://www.blog-lab05-cloudfront.shop",
-      "https://blog-lab05-cloudfront.shop"
-    ]
+  allow_origins = [
+    "https://www.blog-lab05-cloudfront.shop",
+    "https://blog-lab05-cloudfront.shop"
+  ]
 
     allow_methods = [
       "GET",
@@ -19,6 +19,7 @@ resource "aws_apigatewayv2_api" "api_gateway_blog_lab05" {
     allow_headers = [
       "Content-Type",
       "Authorization",
+      
     ]
     max_age = 300
   }
@@ -68,6 +69,13 @@ resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_delete" {
   authorizer_id      = aws_apigatewayv2_authorizer.blog_lab05_authorizer.id
 }
 
+resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_presigned" {
+  api_id    = aws_apigatewayv2_api.api_gateway_blog_lab05.id
+  route_key = "POST /posts/presigned-url"
+  target    = "integrations/${aws_apigatewayv2_integration.api_gateway_blog_lab05_integration.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.blog_lab05_authorizer.id
+}
 
 resource "aws_apigatewayv2_stage" "api_gateway_blog_lab05_stage" {
   api_id      = aws_apigatewayv2_api.api_gateway_blog_lab05.id

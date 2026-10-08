@@ -257,4 +257,38 @@ exports.handler = async (event) => {
       message: "Rota não encontrada",
     }),
   };
+
+// ==========================================
+// POST /uploads/presigned-url
+// Gerar uma URL pré-assinada para upload de arquivos
+// ==========================================
+if (event.routeKey === "POST /uploads/presigned-url") {
+
+  let body;
+
+  try {
+    body = JSON.parse(event.body);
+  } catch (error) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "JSON inválido"
+      })
+    };
+  }
+
+  const { fileName, fileType } = body;
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: "Presigned URL gerada com sucesso",
+      fileName,
+      fileType,
+      url: `https://example.com/uploads/${fileName}`
+    })
+  };
+}
+
+
 };
