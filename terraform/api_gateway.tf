@@ -3,10 +3,10 @@ resource "aws_apigatewayv2_api" "api_gateway_blog_lab05" {
   protocol_type = "HTTP"
 
   cors_configuration {
-  allow_origins = [
-    "https://www.blog-lab05-cloudfront.shop",
-    "https://blog-lab05-cloudfront.shop"
-  ]
+    allow_origins = [
+      "https://www.blog-lab05-cloudfront.shop",
+      "https://blog-lab05-cloudfront.shop"
+    ]
 
     allow_methods = [
       "GET",

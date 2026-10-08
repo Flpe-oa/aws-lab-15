@@ -50,6 +50,32 @@ data "aws_iam_policy_document" "blog_lab05_lambda_dynamodb_policy" {
   }
 }
 
+# Permissões para acessar o bucket S3
+data "aws_iam_policy_document" "blog_lab05_lambda_s3_policy" {
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = [
+      aws_s3_bucket.blog_media_bucket.arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.blog_media_bucket.arn}/*"
+    ]
+  }
+}
+
 # Role de execução da Lambda
 resource "aws_iam_role" "blog_lab05_lambda_execution_role" {
   name               = "blog-lab05-lambda-execution-role"
@@ -85,6 +111,18 @@ resource "aws_iam_role_policy_attachment" "blog_lab05_lambda_dynamodb_policy_att
   policy_arn = aws_iam_policy.blog_lab05_lambda_dynamodb_policy.arn
 }
 
+# Cria a policy gerenciada a partir do lambda s3 policy document
+resource "aws_iam_policy" "blog_lab05_lambda_s3_policy" {
+  name   = "blog-lab05-lambda-s3-policy"
+  policy = data.aws_iam_policy_document.blog_lab05_lambda_s3_policy.json
+}
+
+# Anexa a policy à role da Lambda
+resource "aws_iam_role_policy_attachment" "blog_lab05_lambda_s3_policy_attachment" {
+  role       = aws_iam_role.blog_lab05_lambda_execution_role.name
+  policy_arn = aws_iam_policy.blog_lab05_lambda_s3_policy.arn
+}
+
 # Função Lambda
 resource "aws_lambda_function" "blog_lab05_lambda" {
   function_name    = "blog-lab05-lambda"
@@ -100,6 +138,7 @@ resource "aws_lambda_function" "blog_lab05_lambda" {
       ENVIRONMENT = "Dev"
       LOG_LEVEL   = "info"
       TABLE_NAME  = aws_dynamodb_table.blog_lab05_table.name
+      MEDIA_BUCKET_NAME = aws_s3_bucket.blog_media_bucket.bucket
     }
   }
 
