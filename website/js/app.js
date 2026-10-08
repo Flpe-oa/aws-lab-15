@@ -20,6 +20,12 @@ const messageBox = document.getElementById("message");
 const postForm = document.getElementById("postForm");
 const postsContainer = document.getElementById("postsContainer");
 
+/* Elementos relacionados ao upload de imagens */
+
+const imageInput = document.getElementById("imageInput");
+const uploadImageButton = document.getElementById("uploadImageButton");
+const uploadStatus = document.getElementById("uploadStatus");
+
 /* ---------- Utilitários ---------- */
 
 /** Mostra uma mensagem para o usuário. type: "info" | "success" | "error" */
@@ -214,6 +220,158 @@ postForm.addEventListener("submit", async function (event) {
     showMessage(error.message || "Erro ao criar post.", "error");
   } finally {
     setLoading(postForm, false);
+  }
+});
+/* ---------- Upload de imagem ---------- */
+
+/*
+ * O upload acontece em duas etapas:
+ *
+ * 1. Pedimos para a API uma Presigned URL.
+ * 2. Usamos essa URL para enviar o arquivo diretamente para o S3.
+ *
+ * A Lambda não recebe o arquivo.
+ * Ela apenas gera uma autorização temporária para o upload.
+ */
+
+uploadImageButton.addEventListener("click", async function () {
+
+  /* Verifica se o usuário escolheu algum arquivo */
+
+  const file = imageInput.files[0];
+
+  if (!file) {
+    uploadStatus.textContent = "Selecione uma imagem antes de enviar.";
+    return;
+  }
+
+  uploadImageButton.disabled = true;
+  uploadStatus.textContent = "Preparando upload...";
+
+  try {
+
+    /*
+     * ----------------------------------------------------
+     * ETAPA 1
+     * Solicitar uma Presigned URL para a nossa API
+     * ----------------------------------------------------
+     *
+     * Enviamos para a Lambda:
+     *
+     * fileName → nome do arquivo
+     * fileType → MIME type da imagem
+     *
+     * Exemplo:
+     *
+     * {
+     *   "fileName": "foto.jpg",
+     *   "fileType": "image/jpeg"
+     * }
+     */
+
+    const response = await fetch(`${API_URL}/uploads/presigned-url`, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
+      },
+
+      body: JSON.stringify({
+        fileName: file.name,
+        fileType: file.type
+      })
+    });
+
+    const data = await response.json();
+
+    /*
+     * Se o token estiver expirado ou inválido,
+     * o usuário precisa fazer login novamente.
+     */
+
+    if (response.status === 401 || response.status === 403) {
+      showLoggedOut();
+
+      uploadStatus.textContent =
+        "Sua sessão expirou. Entre novamente para enviar a imagem.";
+
+      return;
+    }
+
+    /*
+     * Verifica se a API retornou algum erro.
+     */
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Não foi possível gerar a Presigned URL."
+      );
+    }
+
+    /*
+     * A Lambda devolveu a URL temporária que permite
+     * fazer o upload diretamente para o S3.
+     */
+
+    const uploadUrl = data.url;
+
+    if (!uploadUrl) {
+      throw new Error("A API não retornou uma URL de upload.");
+    }
+
+    uploadStatus.textContent = "Enviando imagem para o S3...";
+
+    /*
+     * ----------------------------------------------------
+     * ETAPA 2
+     * Upload direto para o S3
+     * ----------------------------------------------------
+     *
+     * Aqui o navegador envia o arquivo diretamente
+     * para a URL gerada pela Lambda.
+     */
+
+    const uploadResponse = await fetch(uploadUrl, {
+      method: "PUT",
+
+      headers: {
+        "Content-Type": file.type
+      },
+
+      body: file
+    });
+
+    /*
+     * O S3 deve responder com sucesso (HTTP 200).
+     */
+
+    if (!uploadResponse.ok) {
+      throw new Error("O S3 recusou o upload da imagem.");
+    }
+
+    /*
+     * Upload concluído.
+     */
+
+    uploadStatus.textContent =
+      `Imagem "${file.name}" enviada com sucesso!`;
+
+  } catch (error) {
+
+    console.error("Erro no upload:", error);
+
+    uploadStatus.textContent =
+      error.message || "Erro ao enviar a imagem.";
+
+  } finally {
+
+    /*
+     * Reabilita o botão independentemente de
+     * sucesso ou erro.
+     */
+
+    uploadImageButton.disabled = false;
   }
 });
 

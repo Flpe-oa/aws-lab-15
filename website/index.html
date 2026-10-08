@@ -95,6 +95,23 @@
         <textarea id="postContent" rows="6" placeholder="Escreva seu post..." required></textarea>
 
         <button type="submit" class="btn-primary">Publicar post</button>
+
+        <label for="imageInput">Imagem</label>
+        <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+        >
+
+        <button
+        type="button"
+        id="uploadImageButton"
+        class="btn-secondary"
+        >
+        Enviar imagem
+        </button>
+
+        <p id="uploadStatus" class="hint"></p>
       </form>
     </section>
 
