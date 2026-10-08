@@ -7,17 +7,9 @@ const {
   DeleteItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 
-const {
-  S3Client,
-  PutObjectCommand,
-} = require("@aws-sdk/client-s3");
-
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-
 const crypto = require("crypto");
 
 const client = new DynamoDBClient({});
-const s3Client = new S3Client({});
 
 exports.handler = async (event) => {
   console.log(JSON.stringify(event, null, 2));
