@@ -29,7 +29,8 @@ resource "aws_s3_bucket_cors_configuration" "blog_media_bucket_cors" {
 
   cors_rule {
     allowed_origins = [
-      "https://www.blog-lab05-cloudfront.shop"
+      "https://www.blog-lab05-cloudfront.shop",
+      "https://blog-lab05-cloudfront.shop"
     ]
 
     allowed_methods = [

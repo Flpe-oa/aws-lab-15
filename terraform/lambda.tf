@@ -2,7 +2,7 @@
 data "archive_file" "blog_lab05_lambda" {
   type        = "zip"
   source_dir  = "${path.module}/app/"
-  output_path = "${path.module}/app/function.zip"
+  output_path = "${path.module}/build/function.zip"
 }
 
 # Trust policy: permite que o serviço Lambda assuma a role

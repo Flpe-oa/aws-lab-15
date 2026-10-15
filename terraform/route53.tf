@@ -24,8 +24,6 @@ resource "aws_route53_record" "record_acm" {
   zone_id         = aws_route53_zone.blog-lab05-cloudfront.zone_id
 }
 
-
-
 resource "aws_route53_record" "www" {
   zone_id = aws_route53_zone.blog-lab05-cloudfront.zone_id
   name    = "www.blog-lab05-cloudfront.shop"
@@ -34,6 +32,42 @@ resource "aws_route53_record" "www" {
   alias {
     name                   = aws_cloudfront_distribution.frontend_distribution.domain_name
     zone_id                = aws_cloudfront_distribution.frontend_distribution.hosted_zone_id
-    evaluate_target_health = true
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "root" {
+  zone_id = aws_route53_zone.blog-lab05-cloudfront.zone_id
+  name    = "blog-lab05-cloudfront.shop"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.frontend_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.frontend_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "www_ipv6" {
+  zone_id = aws_route53_zone.blog-lab05-cloudfront.zone_id
+  name    = "www.blog-lab05-cloudfront.shop"
+  type    = "AAAA"
+
+  alias {
+    name                   = aws_cloudfront_distribution.frontend_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.frontend_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_route53_record" "root_ipv6" {
+  zone_id = aws_route53_zone.blog-lab05-cloudfront.zone_id
+  name    = "blog-lab05-cloudfront.shop"
+  type    = "AAAA"
+
+  alias {
+    name                   = aws_cloudfront_distribution.frontend_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.frontend_distribution.hosted_zone_id
+    evaluate_target_health = false
   }
 }

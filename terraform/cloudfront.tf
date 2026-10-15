@@ -55,4 +55,3 @@ resource "aws_cloudfront_origin_access_control" "s3_frontend_oac" {
   signing_protocol                  = "sigv4"
 }
 
-
