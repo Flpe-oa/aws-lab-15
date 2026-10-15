@@ -1,8 +1,8 @@
 # Pacote da Lambda
 data "archive_file" "blog_lab05_lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/app/"
-  output_path = "${path.module}/build/function.zip"
+  source_dir  = "${path.module}/../app/"
+  output_path = "${path.module}/../build/function.zip"
 }
 
 # Trust policy: permite que o serviço Lambda assuma a role
@@ -22,16 +22,26 @@ data "aws_iam_policy_document" "assume_role" {
 data "aws_iam_policy_document" "blog_lab05_lambda_policy" {
   statement {
     effect = "Allow"
-
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
     ]
+    resources = [
+      "${aws_cloudwatch_log_group.blog_lab05_lambda.arn}:*"
+    ]
+  }
 
-    resources = ["arn:aws:logs:*:*:*"]
+  statement {
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup"
+    ]
+    resources = [
+      "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/blog-lab05-lambda"
+    ]
   }
 }
+
 # Permissões para acessar a tabela DynamoDB
 data "aws_iam_policy_document" "blog_lab05_lambda_dynamodb_policy" {
   statement {
@@ -76,14 +86,23 @@ data "aws_iam_policy_document" "blog_lab05_lambda_s3_policy" {
   }
 }
 
+# Cria o grupo de logs para a Lambda
+resource "aws_cloudwatch_log_group" "blog_lab05_lambda" {
+  name              = "/aws/lambda/blog-lab05-lambda"
+  retention_in_days = 7
+
+  tags = {
+    Name = "blog-lab05-lambda-log-group"
+  }
+}
+
 # Role de execução da Lambda
 resource "aws_iam_role" "blog_lab05_lambda_execution_role" {
   name               = "blog-lab05-lambda-execution-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 
   tags = {
-    Name        = "blog-lab05-lambda-execution-role"
-    Environment = "Dev"
+    Name = "blog-lab05-lambda-execution-role"
   }
 }
 
@@ -125,7 +144,8 @@ resource "aws_iam_role_policy_attachment" "blog_lab05_lambda_s3_policy_attachmen
 
 # Função Lambda
 resource "aws_lambda_function" "blog_lab05_lambda" {
-  function_name    = "blog-lab05-lambda"
+  function_name = "blog-lab05-lambda"
+
   filename         = data.archive_file.blog_lab05_lambda.output_path
   source_code_hash = data.archive_file.blog_lab05_lambda.output_base64sha256
 
@@ -133,17 +153,22 @@ resource "aws_lambda_function" "blog_lab05_lambda" {
   handler = "index.handler"
   runtime = "nodejs24.x"
 
+  memory_size = 256
+  timeout     = 10
+
   environment {
     variables = {
-      ENVIRONMENT       = "Dev"
       LOG_LEVEL         = "info"
       TABLE_NAME        = aws_dynamodb_table.blog_lab05_table.name
       MEDIA_BUCKET_NAME = aws_s3_bucket.blog_media_bucket.bucket
     }
   }
 
+  depends_on = [
+    aws_cloudwatch_log_group.blog_lab05_lambda,
+  ]
+
   tags = {
-    Name        = "blog-lab05-lambda"
-    Environment = "Dev"
+    Name = "blog-lab05-lambda"
   }
 }

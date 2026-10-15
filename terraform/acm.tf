@@ -1,11 +1,10 @@
 resource "aws_acm_certificate" "cert" {
-  domain_name               = "blog-lab05-cloudfront.shop"
-  subject_alternative_names = ["*.blog-lab05-cloudfront.shop"]
+  domain_name               = local.domain
+  subject_alternative_names = ["*.${local.domain}"]
   validation_method         = "DNS"
 
   tags = {
-    Name        = "blog-lab05-cloudfront"
-    Environment = "Dev"
+    Name = "blog-lab05-cloudfront"
   }
 
   lifecycle {

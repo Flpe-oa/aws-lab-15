@@ -3,10 +3,7 @@ resource "aws_apigatewayv2_api" "api_gateway_blog_lab05" {
   protocol_type = "HTTP"
 
   cors_configuration {
-    allow_origins = [
-      "https://www.blog-lab05-cloudfront.shop",
-      "https://blog-lab05-cloudfront.shop"
-    ]
+    allow_origins = local.allowed_origins
 
     allow_methods = [
       "GET",
@@ -82,8 +79,13 @@ resource "aws_apigatewayv2_route" "api_gateway_blog_lab05_route_presigned" {
 
 resource "aws_apigatewayv2_stage" "api_gateway_blog_lab05_stage" {
   api_id      = aws_apigatewayv2_api.api_gateway_blog_lab05.id
-  name        = "Dev"
+  name        = var.environment
   auto_deploy = true
+
+  default_route_settings {
+    throttling_burst_limit = 20
+    throttling_rate_limit  = 10
+  }
 }
 
 resource "aws_lambda_permission" "api_gateway_blog_lab05_permission" {
@@ -105,6 +107,6 @@ resource "aws_apigatewayv2_authorizer" "blog_lab05_authorizer" {
       aws_cognito_user_pool_client.blog_lab05_user_pool_client.id
     ]
 
-    issuer = "https://cognito-idp.us-east-1.amazonaws.com/${aws_cognito_user_pool.blog_lab05_user_pool.id}"
+    issuer = "https://cognito-idp.${var.aws_region}.amazonaws.com/${aws_cognito_user_pool.blog_lab05_user_pool.id}"
   }
 }

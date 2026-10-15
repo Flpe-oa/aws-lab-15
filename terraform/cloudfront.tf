@@ -12,8 +12,8 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   default_root_object = "index.html"
 
   aliases = [
-    "blog-lab05-cloudfront.shop",
-    "www.blog-lab05-cloudfront.shop",
+    var.domain_name,
+    "www.${var.domain_name}",
   ]
 
   web_acl_id = aws_wafv2_web_acl.blog_lab05_waf.arn
@@ -55,3 +55,22 @@ resource "aws_cloudfront_origin_access_control" "s3_frontend_oac" {
   signing_protocol                  = "sigv4"
 }
 
+action "aws_cloudfront_create_invalidation" "frontend" {
+  config {
+    distribution_id = aws_cloudfront_distribution.frontend_distribution.id
+    paths           = ["/*"]
+  }
+}
+
+resource "terraform_data" "invalidate_frontend" {
+  triggers_replace = [for o in aws_s3_object.frontend : o.etag]
+
+  lifecycle {
+    action_trigger {
+      events  = [before_create, before_update]
+      actions = [action.aws_cloudfront_create_invalidation.frontend]
+    }
+  }
+
+  depends_on = [aws_s3_object.frontend]
+}

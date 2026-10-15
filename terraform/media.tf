@@ -2,8 +2,7 @@ resource "aws_s3_bucket" "blog_media_bucket" {
   bucket = "blog-lab05-media"
 
   tags = {
-    Name        = "blog-lab05-media"
-    Environment = "Dev"
+    Name = "blog-lab05-media"
   }
 }
 
@@ -28,10 +27,7 @@ resource "aws_s3_bucket_cors_configuration" "blog_media_bucket_cors" {
   bucket = aws_s3_bucket.blog_media_bucket.id
 
   cors_rule {
-    allowed_origins = [
-      "https://www.blog-lab05-cloudfront.shop",
-      "https://blog-lab05-cloudfront.shop"
-    ]
+    allowed_origins = local.allowed_origins
 
     allowed_methods = [
       "PUT",

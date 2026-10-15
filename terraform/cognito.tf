@@ -14,8 +14,7 @@ resource "aws_cognito_user_pool" "blog_lab05_user_pool" {
   }
 
   tags = {
-    Name        = "blog-lab05-user-pool"
-    Environment = "Dev"
+    Name = "blog-lab05-user-pool"
   }
 }
 
