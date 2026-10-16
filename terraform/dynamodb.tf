@@ -10,6 +10,5 @@ resource "aws_dynamodb_table" "blog_lab05_table" {
 
   tags = {
     Name        = "blog-lab05-table"
-    Environment = "Dev"
   }
 }

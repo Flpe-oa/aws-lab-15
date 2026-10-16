@@ -1,16 +1,23 @@
-.terraform/
+# Terraform
+**/.terraform/*
 *.tfstate
 *.tfstate.*
 *.tfplan
+.terraform.lock.hcl.backup
 
-crash.log
-crash.*.log
+# Lambda
+app/node_modules/
+build/
+**/function.zip
 
+# Ambiente
 .env
 .env.*
+*.tfvars
+*.tfvars.json
 
-.DS_Store
+# Logs
+*.log
 
-*.zip
-node_modules/
-tf.sh
+# Arquitetura
+*.drawio

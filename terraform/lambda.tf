@@ -144,7 +144,7 @@ resource "aws_iam_role_policy_attachment" "blog_lab05_lambda_s3_policy_attachmen
 
 # Função Lambda
 resource "aws_lambda_function" "blog_lab05_lambda" {
-  function_name = "blog-lab05-lambda"
+  function_name = "blog-lab05-lambda-backend"
 
   filename         = data.archive_file.blog_lab05_lambda.output_path
   source_code_hash = data.archive_file.blog_lab05_lambda.output_base64sha256

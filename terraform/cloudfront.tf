@@ -11,10 +11,7 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   comment             = "CloudFront distribution for frontend"
   default_root_object = "index.html"
 
-  aliases = [
-    var.domain_name,
-    "www.${var.domain_name}",
-  ]
+  aliases = local.aliases
 
   web_acl_id = aws_wafv2_web_acl.blog_lab05_waf.arn
 
