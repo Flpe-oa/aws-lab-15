@@ -37,28 +37,6 @@ resource "aws_wafv2_web_acl" "blog_lab05_waf" {
     }
   }
 
-  #   rule {
-  #     name     = "RateLimitByIP"
-  #     priority = 2
-
-  #     action {
-  #       block {}
-  #     }
-
-  #     statement {
-  #       rate_based_statement {
-  #         limit              = 10
-  #         aggregate_key_type = "IP"
-  #       }
-  #     }
-
-  #     visibility_config {
-  #       cloudwatch_metrics_enabled = true
-  #       metric_name                = "RateLimitByIP"
-  #       sampled_requests_enabled   = true
-  #     }
-  #   }
-
   visibility_config {
     cloudwatch_metrics_enabled = true
     metric_name                = "blog-lab05-waf"
