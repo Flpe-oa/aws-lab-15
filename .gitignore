@@ -4,6 +4,13 @@
 *.tfstate.*
 *.tfplan
 .terraform.lock.hcl.backup
+/tfstate
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tflock
+crash.log
+crash.*.log
 
 # Lambda
 app/node_modules/
@@ -21,4 +28,4 @@ build/
 
 # Arquitetura
 *.drawio
-/tfstate
+F
