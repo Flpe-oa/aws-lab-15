@@ -21,3 +21,4 @@ build/
 
 # Arquitetura
 *.drawio
+/tfstate
