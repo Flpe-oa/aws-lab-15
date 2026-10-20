@@ -18,7 +18,7 @@ Projeto de laboratório que implementa a infraestrutura de um blog usando servi�
 
 ## Arquitetura
 
-![Diagrama da arquitetura AWS provisionada com Terraform](docs/images/architecture.png)
+![Diagrama da arquitetura AWS provisionada com Terraform](docs/architecture.png)
 
 **Observação sobre o diagrama:** o Cognito emite tokens usados pelo navegador; o API Gateway valida o JWT nas rotas protegidas. A Lambda gera uma presigned URL para o upload, e o navegador envia o arquivo diretamente ao S3. O diagrama representa a arquitetura lógica, não a localização física dos serviços.
 
