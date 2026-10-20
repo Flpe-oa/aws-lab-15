@@ -18,27 +18,7 @@ Projeto de laboratório que implementa a infraestrutura de um blog usando servi�
 
 ## Arquitetura
 
-```mermaid
-flowchart TD
-    U[Usuário / Navegador] --> DNS[Route 53]
-    DNS --> CF[CloudFront]
-    WAF[AWS WAF] -. protege .-> CF
-    CF --> WEB[S3 privado - Frontend]
-
-    U -->|HTTPS / API requests| API[API Gateway HTTP API]
-    COG[Amazon Cognito] -->|Emite JWT| U
-    API -->|Valida JWT nas rotas protegidas| AUTH[JWT Authorizer]
-    AUTH --> L[ AWS Lambda ]
-    API -->|Rotas públicas de leitura| L
-    L --> DB[(Amazon DynamoDB)]
-    L -->|Gera presigned URL| U
-    U -->|PUT direto usando URL temporária| MEDIA[S3 privado - Mídia]
-
-    ACM[AWS Certificate Manager] -. certificado TLS .-> CF
-    L --> CW[Amazon CloudWatch]
-    API --> CW
-    WAF --> CW
-```
+![Diagrama da arquitetura AWS provisionada com Terraform](docs/images/architecture.png)
 
 **Observação sobre o diagrama:** o Cognito emite tokens usados pelo navegador; o API Gateway valida o JWT nas rotas protegidas. A Lambda gera uma presigned URL para o upload, e o navegador envia o arquivo diretamente ao S3. O diagrama representa a arquitetura lógica, não a localização física dos serviços.
 
