@@ -162,71 +162,6 @@ Confirme a operação somente após revisar as alterações planejadas. Para amb
 
 Os arquivos do site são publicados no S3 pelo Terraform. Depois de alterar arquivos estáticos, rode `terraform plan` e `terraform apply` e, se necessário, invalide o cache do CloudFront. Use o ID real da distribuição obtido no ambiente — não armazene IDs ou valores de ambiente como se fossem universais.
 
-## Segurança e boas práticas para publicar no GitHub
-
-Antes de tornar o repositório público:
-
-- **Nunca comite** credenciais AWS, tokens JWT, senhas, arquivos `.tfstate`, backups de state, `.env` ou arquivos de credenciais.
-- Verifique o `.gitignore` e o histórico Git. Remover um segredo do último commit não o remove do histórico.
-- Use variáveis ou mecanismos seguros para valores específicos do ambiente; não inclua senhas de usuários de teste no código ou no README.
-- Evite registrar eventos HTTP completos se eles puderem conter cabeçalhos `Authorization` ou outros dados sensíveis.
-- Revise políticas IAM, políticas de bucket, regras WAF, CORS e exposição dos endpoints.
-- Trate o projeto como laboratório, não como uma arquitetura pronta para produção.
-- Não publique saídas que contenham tokens ou URLs pré-assinadas ainda válidas.
-
-Exemplo de `.gitignore` inicial (adapte às necessidades do repositório):
-
-```gitignore
-# Terraform
-**/.terraform/*
-*.tfstate
-*.tfstate.*
-*.tfplan
-crash.log
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# Secrets / local configuration
-.env
-.env.*
-*.pem
-*.key
-.aws/
-
-# Node.js
-node_modules/
-npm-debug.log*
-```
-
-O arquivo `.terraform.lock.hcl` normalmente deve ser versionado para manter as versões dos providers consistentes. Não ignore esse arquivo por padrão.
-
-## Custos e limpeza
-
-Serviços gerenciados podem gerar custos mesmo em um laboratório. Verifique os preços aplicáveis à sua região e ao uso real, principalmente CloudFront, WAF, Route 53, ACM quando aplicável, API Gateway, Lambda, DynamoDB, S3 e logs.
-
-- Configure AWS Budgets e alertas de custo.
-- Remova uploads de teste e objetos desnecessários.
-- Revise retenção e volume de logs.
-- Lembre-se de que versionamento de S3 pode manter versões antigas dos objetos.
-- Antes de destruir recursos, verifique os dados que deseja preservar.
-
-Para remover a infraestrutura gerenciada pelo Terraform:
-
-```bash
-cd terraform
-terraform plan -destroy
-```
-
-Revise cuidadosamente o plano e só então execute:
-
-```bash
-terraform destroy
-```
-
-A remoção pode falhar se houver objetos em buckets, dependências externas ou recursos protegidos. Não execute `destroy` sem compreender o impacto e confirmar que não precisa dos dados.
-
 ## Próximas etapas
 
 1. Concluir testes do WAF e rate limiting.
@@ -252,4 +187,4 @@ A remoção pode falhar se houver objetos em buckets, dependências externas ou 
 
 ---
 
-**Projeto de laboratório para estudo de Cloud / DevOps / SRE.** A infraestrutura continua em evolução; consulte as listas de implementação e pendências antes de interpretar qualquer item como concluído.
+**Projeto de laboratório para estudo de Cloud / DevOps / SRE.** A infraestrutura continua em evolução.
