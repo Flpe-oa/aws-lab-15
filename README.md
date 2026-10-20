@@ -1,8 +1,8 @@
-# Medium Blog — AWS Serverless com Terraform
+# Blog — AWS Serverless com Terraform
 
-Projeto de laboratório que implementa a infraestrutura de um blog usando serviços gerenciados da AWS e **Infrastructure as Code (IaC) com Terraform**. O objetivo principal é praticar arquitetura cloud, automação de infraestrutura, segurança, integração entre serviços e preparar a base para futuras etapas de CI/CD e hardening.
+Projeto de laboratório que implementa a infraestrutura de um blog usando serviços gerenciados da AWS e **Infrastructure as Code (IaC) com Terraform**. O objetivo principal é praticar arquitetura cloud, automação de infraestrutura, segurança, integração entre serviços.
 
-> **Status:** projeto em evolução. Este README diferencia os recursos implementados das melhorias planejadas. A infraestrutura pode gerar custos na AWS; consulte a seção [Custos e limpeza](#custos-e-limpeza).
+> **Status:** projeto em evolução. Este README diferencia os recursos implementados das melhorias planejadas. A infraestrutura pode gerar custos na AWS.
 
 ## Objetivos
 
@@ -37,7 +37,7 @@ Projeto de laboratório que implementa a infraestrutura de um blog usando servi�
 | **Amazon Cognito** | Gerencia a autenticação e emite tokens JWT para o cliente. |
 | **Amazon S3 — mídia** | Armazena arquivos enviados pelo usuário em um bucket separado e privado. |
 | **Amazon CloudWatch** | Recebe logs e métricas dos componentes que foram configurados para observabilidade. |
-| **AWS Budgets** | Previsto no escopo para alertas de custos; confirmar a configuração efetiva no ambiente antes de considerar concluído. |
+
 
 ## Fluxos principais
 
@@ -165,13 +165,11 @@ Os arquivos do site são publicados no S3 pelo Terraform. Depois de alterar arqu
 ## Próximas etapas
 
 1. Concluir testes do WAF e rate limiting.
-2. Revisar IAM, logs e controles de segurança.
-3. Associar e apresentar imagens nos posts.
-4. Reorganizar a infraestrutura em módulos Terraform reutilizáveis.
-5. Migrar o state para backend remoto com controle de concorrência e proteção adequada.
-6. Automatizar validação e implantação com GitHub Actions usando OIDC, evitando chaves AWS estáticas no pipeline.
-7. Implementar pipelines de frontend e backend.
-8. Revisar autorização por proprietário, paginação, validação de arquivos e demais melhorias da aplicação.
+2. Associar e apresentar imagens nos posts.
+3. Reorganizar a infraestrutura em módulos Terraform reutilizáveis.
+4. Automatizar validação e implantação com GitHub Actions usando OIDC, evitando chaves AWS estáticas no pipeline.
+5. Implementar pipelines de frontend e backend.
+6. Revisar autorização por proprietário, paginação, validação de arquivos e demais melhorias da aplicação.
 
 ## Aprendizados demonstrados
 
